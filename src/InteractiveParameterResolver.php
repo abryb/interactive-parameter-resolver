@@ -19,7 +19,7 @@ use Webmozart\Assert\Assert;
 class InteractiveParameterResolver implements InteractiveParameterResolverInterface
 {
     /**
-     * @var QuestionHelper
+     * @var IO
      */
     private $questionHelper;
     /**
@@ -54,7 +54,7 @@ class InteractiveParameterResolver implements InteractiveParameterResolverInterf
     )
     {
         Assert::allIsInstanceOf($handlers, ParameterHandlerInterface::class);
-        $this->questionHelper         = new QuestionHelper($input, $output);
+        $this->questionHelper         = new IO($input, $output);
         $this->handlers               = $handlers;
         $this->parameterInfoExtractor = $parameterInfoExtractor ?: ParameterInfoExtractorFactory::create();
         $this->typeResolver           = $typeResolver ?: new FirstTypeResolver();
@@ -79,6 +79,9 @@ class InteractiveParameterResolver implements InteractiveParameterResolverInterf
 
         foreach ($this->handlers as $handler) {
             if ($handler->canHandle($parameter)) {
+                if ($handler instanceof ParameterHandlerWithResolverInterface) {
+                    $handler->setResolver($this);
+                }
                 return $handler->handle($parameter, $this->questionHelper);
             }
         }

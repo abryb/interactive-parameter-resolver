@@ -11,5 +11,5 @@ interface ParameterHandlerInterface
 {
     public function canHandle(Parameter $parameter): bool;
 
-    public function handle(Parameter $parameter, QuestionHelper $questionHelper);
+    public function handle(Parameter $parameter, IO $IO);
 }

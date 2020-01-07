@@ -30,8 +30,8 @@ class Parameter
      */
     public function __construct(\ReflectionParameter $reflectionParameter, Type $type, string $description)
     {
-        $this->type                = $type;
-        $this->description         = $description;
+        $this->type = $type;
+        $this->description = $description;
         $this->reflectionParameter = $reflectionParameter;
     }
 
@@ -48,5 +48,10 @@ class Parameter
     public function getReflectionParameter(): \ReflectionParameter
     {
         return $this->reflectionParameter;
+    }
+
+    public function getDefaultValue()
+    {
+        return $this->reflectionParameter->getDefaultValue();
     }
 }

@@ -12,7 +12,7 @@ use Symfony\Component\Console\Question\Question;
 /**
  * @author Błażej Rybarkiewicz <b.rybarkiewicz@gmail.com>
  */
-class QuestionHelper
+class IO
 {
     /**
      * @var InputInterface

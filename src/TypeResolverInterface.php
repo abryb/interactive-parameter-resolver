@@ -12,5 +12,5 @@ use Abryb\ParameterInfo\Type;
  */
 interface TypeResolverInterface
 {
-    public function resolveType(ParameterInfo $info, QuestionHelper $helper): Type;
+    public function resolveType(ParameterInfo $info, IO $helper): Type;
 }
