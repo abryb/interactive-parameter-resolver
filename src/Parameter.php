@@ -54,4 +54,9 @@ class Parameter
     {
         return $this->reflectionParameter->getDefaultValue();
     }
+
+    public function getName()
+    {
+        return $this->reflectionParameter->getName();
+    }
 }

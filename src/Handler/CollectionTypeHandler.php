@@ -11,6 +11,7 @@ use Abryb\InteractiveParameterResolver\Parameter;
 use Abryb\InteractiveParameterResolver\ParameterHandlerInterface;
 use Abryb\InteractiveParameterResolver\ParameterHandlerWithResolverInterface;
 use Abryb\ParameterInfo\Type;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
  * @author Błażej Rybarkiewicz <b.rybarkiewicz@gmail.com>
@@ -30,5 +31,11 @@ class CollectionTypeHandler implements ParameterHandlerInterface, ParameterHandl
     public function handle(Parameter $parameter, IO $IO)
     {
         $innerType = $parameter->getType()->getCollectionValueType();
+        $IO->getOutput()->writeln("{$parameter->getName()} is collection.");
+
+        $elements = [];
+        while ($IO->ask(new ConfirmationQuestion("Do you want to add an element? (Y/n): ", false))) {
+
+        }
     }
 }
