@@ -1,0 +1,13 @@
+
+# Dependencies
+vendor
+
+# Php cs fixer
+.php_cs.cache
+
+# tests
+phpunit.phar
+.phpunit.result.cache
+
+# IDE
+.idea

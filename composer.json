@@ -1,0 +1,35 @@
+{
+    "name": "abryb/interactive-parameter-resolver",
+    "description": "Resolve Reflection parameter.",
+    "type": "library",
+    "license": "MIT",
+    "keywords" : [
+        "php",
+        "reflection",
+        "parameter",
+        "symfony",
+        "console"
+    ],
+    "authors": [
+        {
+            "name": "Błażej Rybarkiewicz",
+            "email": "abryb.api@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Abryb\\InteractiveParameterResolver\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Abryb\\InteractiveParameterResolver\\Tests\\": "tests/"
+        }
+    },
+    "require": {
+        "php": "^7.3",
+        "abryb/parameter-info": "^0.1",
+        "symfony/console": "^4.0|^5.0",
+        "webmozart/assert": "^1.0"
+    }
+}
