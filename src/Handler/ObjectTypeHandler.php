@@ -9,8 +9,6 @@ use Abryb\InteractiveParameterResolver\IO;
 use Abryb\InteractiveParameterResolver\Parameter;
 use Abryb\InteractiveParameterResolver\ParameterHandlerInterface;
 use Abryb\InteractiveParameterResolver\ParameterHandlerWithResolverInterface;
-use Abryb\InteractiveParameterResolver\Resolver\TypeResolverInterface;
-use Abryb\ParameterInfo\ParameterInfoExtractorInterface;
 
 /**
  * @author Błażej Rybarkiewicz <b.rybarkiewicz@gmail.com>

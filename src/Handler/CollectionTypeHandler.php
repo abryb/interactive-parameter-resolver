@@ -39,7 +39,7 @@ class CollectionTypeHandler implements ParameterHandlerInterface, ParameterHandl
                 "{$parameter->getName()}[{$count}]",
                 $innerType,
             );
-            $elements[] = $this->resolver->askParameter($parameterChild);
+            $elements[] = $this->resolver->resolveParameter($parameterChild);
         }
 
         return $elements;

@@ -17,6 +17,7 @@ final class ReflectionParameterResolver implements ReflectionParameterResolverIn
      * @var ParameterInfoExtractorInterface
      */
     private $parameterInfoExtractor;
+
     /**
      * @var TypeResolverInterface
      */
@@ -31,16 +32,25 @@ final class ReflectionParameterResolver implements ReflectionParameterResolverIn
         $this->typeResolver           = $typeResolver;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function resolveReflectionParameter(\ReflectionParameter $parameter): Parameter
     {
         $parameterInfo = $this->parameterInfoExtractor->getParameterInfo($parameter);
 
         $type = $this->typeResolver->resolveType($parameterInfo);
 
+        try {
+            $defaultValue = $parameterInfo->getReflection()->getDefaultValue();
+        } catch (\ReflectionException $e) {
+            $defaultValue = null;
+        }
+
         return new Parameter(
             $parameterInfo->getReflection()->getName(),
             $type,
-            $parameterInfo->getReflection()->getDefaultValue(),
+            $defaultValue,
             $parameterInfo->getDescription()
         );
     }

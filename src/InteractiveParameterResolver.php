@@ -5,9 +5,6 @@ declare(strict_types=1);
 namespace Abryb\InteractiveParameterResolver;
 
 use Abryb\InteractiveParameterResolver\Exception\AbrybInteractiveParameterResolverException;
-use Abryb\InteractiveParameterResolver\Util\Util;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Webmozart\Assert\Assert;
 
 /**
@@ -50,7 +47,7 @@ class InteractiveParameterResolver implements InteractiveParameterResolverInterf
     /**
      * @throws AbrybInteractiveParameterResolverException
      */
-    public function askParameter(Parameter $parameter)
+    public function resolveParameter(Parameter $parameter)
     {
         foreach ($this->handlers as $handler) {
             if ($handler->canHandle($parameter)) {
@@ -63,31 +60,36 @@ class InteractiveParameterResolver implements InteractiveParameterResolverInterf
         }
 
         throw new AbrybInteractiveParameterResolverException(sprintf(
-            'Could not find handler for parameter %s of method %s',
+            'Could not find handler for parameter %s of type %s',
             $parameter->getName(),
-            Util::stringifyReflectionParameterFunction($parameter->getReflectionParameter())
+            $parameter->getType()->getBuiltinType()
         ));
     }
 
     /**
      * {@inheritdoc}
      */
-    public function askForReflectionParameter(\ReflectionParameter $reflectionParameter)
+    public function resolveReflectionParameter(\ReflectionParameter $reflectionParameter)
     {
-        return $this->askParameter($this->reflectionParameterResolver->resolveReflectionParameter($reflectionParameter));
+        return $this->resolveParameter($this->reflectionParameterResolver->resolveReflectionParameter($reflectionParameter));
     }
 
     /**
      * {@inheritdoc}
      */
-    public function invokeMethod(\ReflectionMethod $method, object $object)
+    public function invokeReflectionMethod(\ReflectionMethod $method, ?object $object)
     {
+        if (!$method->isStatic() && !$object) {
+            throw new AbrybInteractiveParameterResolverException(sprintf("Can't invoke not static function %s without object.", $method->getName()));
+        }
+
+
         $arguments = [];
         foreach ($method->getParameters() as $reflectionParameter) {
             if (!$reflectionParameter->isVariadic()) {
-                $arguments[] = $this->askForReflectionParameter($reflectionParameter);
+                $arguments[] = $this->resolveReflectionParameter($reflectionParameter);
             } else {
-                $variadic  = $this->askForReflectionParameter($reflectionParameter);
+                $variadic  = $this->resolveReflectionParameter($reflectionParameter);
                 $arguments = array_merge($arguments, $variadic);
             }
         }
@@ -98,7 +100,7 @@ class InteractiveParameterResolver implements InteractiveParameterResolverInterf
     /**
      * {@inheritdoc}
      */
-    public function invokeFunction(\ReflectionFunction $function)
+    public function invokeReflectionFunction(\ReflectionFunction $function)
     {
         $function->invokeArgs($this->getArgumentsForReflectionFunctionAbstract($function));
     }
@@ -108,16 +110,23 @@ class InteractiveParameterResolver implements InteractiveParameterResolverInterf
      */
     public function constructObject(string $class)
     {
-        $r = new \ReflectionClass($class);
+        try {
+            $r = new \ReflectionClass($class);
+        } catch (\ReflectionException $e) {
+            throw new AbrybInteractiveParameterResolverException('Reflection exception.', 0, $e);
+        }
 
         return $r->newInstanceArgs($this->getArgumentsForReflectionFunctionAbstract($r->getMethod('__construct')));
     }
 
-    private function getArgumentsForReflectionFunctionAbstract(\ReflectionFunctionAbstract $function): array
+    /**
+     * {@inheritdoc}
+     */
+    public function getArgumentsForReflectionFunctionAbstract(\ReflectionFunctionAbstract $function): array
     {
         $arguments = [];
         foreach ($function->getParameters() as $reflectionParameter) {
-            $value = $this->askForReflectionParameter($reflectionParameter);
+            $value = $this->resolveReflectionParameter($reflectionParameter);
             if (!$reflectionParameter->isVariadic()) {
                 $arguments[] = $value;
             } else {

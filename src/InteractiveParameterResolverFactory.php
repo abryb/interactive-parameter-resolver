@@ -2,9 +2,7 @@
 
 declare(strict_types=1);
 
-
 namespace Abryb\InteractiveParameterResolver;
-
 
 use Abryb\InteractiveParameterResolver\Handler\CollectionTypeHandler;
 use Abryb\InteractiveParameterResolver\Handler\ObjectTypeHandler;
@@ -24,14 +22,14 @@ final class InteractiveParameterResolverFactory
         InputInterface $input,
         OutputInterface $output,
         array $additionalHandler = []
-    )
+    ) : InteractiveParameterResolverInterface
     {
         return new InteractiveParameterResolver(
             new IO($input, $output),
             array_merge($additionalHandler, [
                 new ScalarTypeHandler(),
                 new ObjectTypeHandler(),
-                new CollectionTypeHandler()
+                new CollectionTypeHandler(),
             ]),
             new ReflectionParameterResolver(
                 ParameterInfoExtractorFactory::create(),
