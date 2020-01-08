@@ -2,15 +2,12 @@
 
 declare(strict_types=1);
 
-
 namespace Abryb\InteractiveParameterResolver\Handler;
-
 
 use Abryb\InteractiveParameterResolver\IO;
 use Abryb\InteractiveParameterResolver\Parameter;
 use Abryb\InteractiveParameterResolver\ParameterHandlerInterface;
 use Abryb\ParameterInfo\Type;
-use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
 
 /**
@@ -36,7 +33,6 @@ class ScalarTypeHandler implements ParameterHandlerInterface
                 return $this->askFloat($parameter, $IO);
             case Type::BUILTIN_TYPE_STRING:
                 return $this->askString($parameter, $IO);
-
         }
     }
 
@@ -51,7 +47,7 @@ class ScalarTypeHandler implements ParameterHandlerInterface
 
     private function askInt(Parameter $parameter, IO $IO)
     {
-        $question = new Question($parameter->getReflectionParameter()->getName(), $parameter->getDefaultValue());
+        $question = new Question($parameter->getName(), $parameter->getDefaultValue());
 
         $result = $IO->ask($question);
 
@@ -60,7 +56,7 @@ class ScalarTypeHandler implements ParameterHandlerInterface
 
     private function askFloat(Parameter $parameter, IO $IO)
     {
-        $question = new Question($parameter->getReflectionParameter()->getName(), $parameter->getDefaultValue());
+        $question = new Question($parameter->getName(), $parameter->getDefaultValue());
 
         $result = $IO->ask($question);
 
@@ -69,7 +65,7 @@ class ScalarTypeHandler implements ParameterHandlerInterface
 
     private function askString(Parameter $parameter, IO $IO)
     {
-        $question = new Question($parameter->getReflectionParameter()->getName(), $parameter->getDefaultValue());
+        $question = new Question($parameter->getName(), $parameter->getDefaultValue());
 
         $result = $IO->ask($question);
 

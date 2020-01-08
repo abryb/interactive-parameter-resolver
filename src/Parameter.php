@@ -12,27 +12,38 @@ use Abryb\ParameterInfo\Type;
 class Parameter
 {
     /**
+     * @var string
+     */
+    private $name;
+
+    /**
      * @var Type
      */
     private $type;
+
     /**
-     * @var string
+     * @var string|null
      */
     private $description;
 
-    /**
-     * @var \ReflectionParameter
-     */
-    private $reflectionParameter;
+    private $defaultValue;
 
     /**
      * Parameter constructor.
+     *
+     * @param mixed|null $defaultValue
      */
-    public function __construct(\ReflectionParameter $reflectionParameter, Type $type, string $description)
+    public function __construct(string $name, Type $type, $defaultValue = null, ?string $description = null)
     {
-        $this->type = $type;
-        $this->description = $description;
-        $this->reflectionParameter = $reflectionParameter;
+        $this->name         = $name;
+        $this->type         = $type;
+        $this->defaultValue = $defaultValue;
+        $this->description  = $description;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
     }
 
     public function getType(): Type
@@ -40,23 +51,13 @@ class Parameter
         return $this->type;
     }
 
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    public function getReflectionParameter(): \ReflectionParameter
-    {
-        return $this->reflectionParameter;
-    }
-
     public function getDefaultValue()
     {
-        return $this->reflectionParameter->getDefaultValue();
-    }
-
-    public function getName()
-    {
-        return $this->reflectionParameter->getName();
+        return $this->defaultValue;
     }
 }

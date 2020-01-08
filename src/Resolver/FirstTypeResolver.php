@@ -2,10 +2,8 @@
 
 declare(strict_types=1);
 
-namespace Abryb\InteractiveParameterResolver\TypeResolver;
+namespace Abryb\InteractiveParameterResolver\Resolver;
 
-use Abryb\InteractiveParameterResolver\IO;
-use Abryb\InteractiveParameterResolver\TypeResolverInterface;
 use Abryb\ParameterInfo\ParameterInfo;
 use Abryb\ParameterInfo\Type;
 
@@ -14,7 +12,7 @@ use Abryb\ParameterInfo\Type;
  */
 class FirstTypeResolver implements TypeResolverInterface
 {
-    public function resolveType(ParameterInfo $info, IO $helper): Type
+    public function resolveType(ParameterInfo $info): Type
     {
         return current($info->getTypes());
     }

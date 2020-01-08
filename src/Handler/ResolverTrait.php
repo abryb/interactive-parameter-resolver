@@ -2,9 +2,7 @@
 
 declare(strict_types=1);
 
-
 namespace Abryb\InteractiveParameterResolver\Handler;
-
 
 use Abryb\InteractiveParameterResolver\InteractiveParameterResolverInterface;
 

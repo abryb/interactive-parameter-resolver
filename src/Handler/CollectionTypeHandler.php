@@ -2,9 +2,7 @@
 
 declare(strict_types=1);
 
-
 namespace Abryb\InteractiveParameterResolver\Handler;
-
 
 use Abryb\InteractiveParameterResolver\IO;
 use Abryb\InteractiveParameterResolver\Parameter;
@@ -34,8 +32,16 @@ class CollectionTypeHandler implements ParameterHandlerInterface, ParameterHandl
         $IO->getOutput()->writeln("{$parameter->getName()} is collection.");
 
         $elements = [];
-        while ($IO->ask(new ConfirmationQuestion("Do you want to add an element? (Y/n): ", false))) {
 
+        $count = 0;
+        while ($IO->ask(new ConfirmationQuestion('Do you want to add an element? (y/N): ', false))) {
+            $parameterChild = new Parameter(
+                "{$parameter->getName()}[{$count}]",
+                $innerType,
+            );
+            $elements[] = $this->resolver->askParameter($parameterChild);
         }
+
+        return $elements;
     }
 }

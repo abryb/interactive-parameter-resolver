@@ -5,10 +5,7 @@ declare(strict_types=1);
 namespace Abryb\InteractiveParameterResolver;
 
 use Abryb\InteractiveParameterResolver\Exception\AbrybInteractiveParameterResolverException;
-use Abryb\InteractiveParameterResolver\TypeResolver\FirstTypeResolver;
 use Abryb\InteractiveParameterResolver\Util\Util;
-use Abryb\ParameterInfo\ParameterInfoExtractorFactory;
-use Abryb\ParameterInfo\ParameterInfoExtractorInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Webmozart\Assert\Assert;
@@ -21,75 +18,113 @@ class InteractiveParameterResolver implements InteractiveParameterResolverInterf
     /**
      * @var IO
      */
-    private $questionHelper;
+    private $io;
+
     /**
      * @var iterable|ParameterHandlerInterface[]
      */
     private $handlers;
 
     /**
-     * @var ParameterInfoExtractorInterface
+     * @var ReflectionParameterResolverInterface
      */
-    private $parameterInfoExtractor;
-    /**
-     * @var TypeResolverInterface
-     */
-    private $typeResolver;
+    private $reflectionParameterResolver;
 
     /**
      * InteractiveParameterResolver constructor.
      *
-     * @param InputInterface $input
-     * @param OutputInterface $output
      * @param ParameterHandlerInterface[] $handlers
-     * @param TypeResolverInterface $typeResolver
-     * @param ParameterInfoExtractorInterface|null $parameterInfoExtractor
      */
     public function __construct(
-        InputInterface $input,
-        OutputInterface $output,
-        iterable $handlers = [],
-        TypeResolverInterface $typeResolver = null,
-        ParameterInfoExtractorInterface $parameterInfoExtractor = null
+        IO $io,
+        iterable $handlers,
+        ReflectionParameterResolverInterface $reflectionParameterResolver
     )
     {
         Assert::allIsInstanceOf($handlers, ParameterHandlerInterface::class);
-        $this->questionHelper         = new IO($input, $output);
-        $this->handlers               = $handlers;
-        $this->parameterInfoExtractor = $parameterInfoExtractor ?: ParameterInfoExtractorFactory::create();
-        $this->typeResolver           = $typeResolver ?: new FirstTypeResolver();
+        $this->io                          = $io;
+        $this->handlers                    = $handlers;
+        $this->reflectionParameterResolver = $reflectionParameterResolver;
     }
 
     /**
-     * @param \ReflectionParameter $parameter
-     * @return mixed
      * @throws AbrybInteractiveParameterResolverException
      */
-    public function askParameter(\ReflectionParameter $parameter)
+    public function askParameter(Parameter $parameter)
     {
-        $parameterInfo = $this->parameterInfoExtractor->getParameterInfo($parameter);
-
-        $type = $this->typeResolver->resolveType($parameterInfo, $this->questionHelper);
-
-        $parameter = new Parameter(
-            $parameterInfo->getReflection(),
-            $type,
-            $parameterInfo->getDescription()
-        );
-
         foreach ($this->handlers as $handler) {
             if ($handler->canHandle($parameter)) {
                 if ($handler instanceof ParameterHandlerWithResolverInterface) {
                     $handler->setResolver($this);
                 }
-                return $handler->handle($parameter, $this->questionHelper);
+
+                return $handler->handle($parameter, $this->io);
             }
         }
 
         throw new AbrybInteractiveParameterResolverException(sprintf(
-            "Could not find handler for parameter %s of method %s",
-            $parameter->getReflectionParameter()->getName(),
+            'Could not find handler for parameter %s of method %s',
+            $parameter->getName(),
             Util::stringifyReflectionParameterFunction($parameter->getReflectionParameter())
         ));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function askForReflectionParameter(\ReflectionParameter $reflectionParameter)
+    {
+        return $this->askParameter($this->reflectionParameterResolver->resolveReflectionParameter($reflectionParameter));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function invokeMethod(\ReflectionMethod $method, object $object)
+    {
+        $arguments = [];
+        foreach ($method->getParameters() as $reflectionParameter) {
+            if (!$reflectionParameter->isVariadic()) {
+                $arguments[] = $this->askForReflectionParameter($reflectionParameter);
+            } else {
+                $variadic  = $this->askForReflectionParameter($reflectionParameter);
+                $arguments = array_merge($arguments, $variadic);
+            }
+        }
+
+        $method->invokeArgs($object, $this->getArgumentsForReflectionFunctionAbstract($method));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function invokeFunction(\ReflectionFunction $function)
+    {
+        $function->invokeArgs($this->getArgumentsForReflectionFunctionAbstract($function));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function constructObject(string $class)
+    {
+        $r = new \ReflectionClass($class);
+
+        return $r->newInstanceArgs($this->getArgumentsForReflectionFunctionAbstract($r->getMethod('__construct')));
+    }
+
+    private function getArgumentsForReflectionFunctionAbstract(\ReflectionFunctionAbstract $function): array
+    {
+        $arguments = [];
+        foreach ($function->getParameters() as $reflectionParameter) {
+            $value = $this->askForReflectionParameter($reflectionParameter);
+            if (!$reflectionParameter->isVariadic()) {
+                $arguments[] = $value;
+            } else {
+                $arguments = array_merge($arguments, $value);
+            }
+        }
+
+        return $arguments;
     }
 }
