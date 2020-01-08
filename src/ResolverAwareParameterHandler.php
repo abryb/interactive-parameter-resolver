@@ -7,7 +7,7 @@ namespace Abryb\InteractiveParameterResolver;
 /**
  * @author Błażej Rybarkiewicz <b.rybarkiewicz@gmail.com>
  */
-interface ParameterHandlerWithResolverInterface
+interface ResolverAwareParameterHandler
 {
     public function setResolver(InteractiveParameterResolverInterface $interactiveParameterResolver);
 }

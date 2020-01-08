@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c641524a74cc7b97a98da31f350ad3bf",
+    "content-hash": "c3c31e7ce855b90d8844c15d70debe06",
     "packages": [
         {
             "name": "abryb/parameter-info",
-            "version": "v0.1.0",
+            "version": "v0.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/abryb/ParameterInfo.git",
-                "reference": "4503d7a3cc13a9d5e9cb3954e7f2c4f7ff9198db"
+                "reference": "8c6a0712f4d8ef064ad716ee36e6ce66cffeb899"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/abryb/ParameterInfo/zipball/4503d7a3cc13a9d5e9cb3954e7f2c4f7ff9198db",
-                "reference": "4503d7a3cc13a9d5e9cb3954e7f2c4f7ff9198db",
+                "url": "https://api.github.com/repos/abryb/ParameterInfo/zipball/8c6a0712f4d8ef064ad716ee36e6ce66cffeb899",
+                "reference": "8c6a0712f4d8ef064ad716ee36e6ce66cffeb899",
                 "shasum": ""
             },
             "require": {
@@ -47,7 +47,7 @@
                 "reflection",
                 "type"
             ],
-            "time": "2019-12-19T12:26:34+00:00"
+            "time": "2020-01-08T13:28:55+00:00"
         },
         {
             "name": "phpdocumentor/reflection-common",

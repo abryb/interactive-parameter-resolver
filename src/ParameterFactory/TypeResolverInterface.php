@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Abryb\InteractiveParameterResolver\Resolver;
+namespace Abryb\InteractiveParameterResolver\ParameterFactory;
 
 use Abryb\ParameterInfo\ParameterInfo;
 use Abryb\ParameterInfo\Type;

@@ -9,10 +9,10 @@ use Abryb\InteractiveParameterResolver\Exception\AbrybInteractiveParameterResolv
 /**
  * @author Błażej Rybarkiewicz <b.rybarkiewicz@gmail.com>
  */
-interface ReflectionParameterResolverInterface
+interface ParameterFactoryInterface
 {
     /**
      * @throws AbrybInteractiveParameterResolverException
      */
-    public function resolveReflectionParameter(\ReflectionParameter $reflectionParameter): Parameter;
+    public function createParameterFromReflection(\ReflectionParameter $reflectionParameter): Parameter;
 }

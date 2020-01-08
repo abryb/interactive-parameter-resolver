@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
+
 namespace Abryb\InteractiveParameterResolver;
+
 
 use Abryb\InteractiveParameterResolver\Handler\CollectionTypeHandler;
 use Abryb\InteractiveParameterResolver\Handler\DateTimeHandler;
@@ -14,24 +16,23 @@ use Abryb\ParameterInfo\ParameterInfoExtractorFactory;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\StyleInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
  * @author Błażej Rybarkiewicz <b.rybarkiewicz@gmail.com>
  */
-final class InteractiveParameterResolverFactory
+class InteractiveFunctionInvokerFactory
 {
-    public static function createResolver(
+    public static function createInvoker(
         StyleInterface $ioStyle,
         array $additionalHandler = []
-    ) : InteractiveParameterResolverInterface
+    ) : InteractiveFunctionInvokerInterface
     {
         $parameterFactory = new ParameterFactory(
             ParameterInfoExtractorFactory::create(),
             new FirstTypeResolver()
         );
 
-        return new InteractiveParameterResolver(
+        $parameterResolver =  new InteractiveParameterResolver(
             $ioStyle,
             array_merge($additionalHandler, [
                 new ScalarTypeHandler(),
@@ -40,5 +41,7 @@ final class InteractiveParameterResolverFactory
                 new CollectionTypeHandler(),
             ])
         );
+
+        return new InteractiveFunctionInvoker($parameterResolver, $parameterFactory);
     }
 }
