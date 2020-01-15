@@ -38,7 +38,7 @@ class InteractiveFunctionInvoker implements InteractiveFunctionInvokerInterface
     {
         $reflection = new \ReflectionFunction($function);
 
-        $reflection->invokeArgs($this->getArgumentsForReflectionFunctionAbstract($reflection));
+        return $reflection->invokeArgs($this->getArgumentsForReflectionFunctionAbstract($reflection));
     }
 
     /**
@@ -48,7 +48,7 @@ class InteractiveFunctionInvoker implements InteractiveFunctionInvokerInterface
     {
         $reflectionMethod = new \ReflectionMethod($object, $method);
 
-        $reflectionMethod->invokeArgs($object, $this->getArgumentsForReflectionFunctionAbstract($reflectionMethod));
+        return $reflectionMethod->invokeArgs($object, $this->getArgumentsForReflectionFunctionAbstract($reflectionMethod));
     }
 
     /**
@@ -58,7 +58,7 @@ class InteractiveFunctionInvoker implements InteractiveFunctionInvokerInterface
     {
         $reflectionMethod = new \ReflectionMethod($class, $method);
 
-        $reflectionMethod->invokeArgs(null, $this->getArgumentsForReflectionFunctionAbstract($reflectionMethod));
+        return $reflectionMethod->invokeArgs(null, $this->getArgumentsForReflectionFunctionAbstract($reflectionMethod));
     }
 
     /**
