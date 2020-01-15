@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Abryb\InteractiveParameterResolver\Resolver;
+namespace Abryb\InteractiveParameterResolver\ParameterFactory;
 
 use Abryb\InteractiveParameterResolver\Parameter;
-use Abryb\InteractiveParameterResolver\ReflectionParameterResolverInterface;
+use Abryb\InteractiveParameterResolver\ParameterFactoryInterface;
 use Abryb\ParameterInfo\ParameterInfoExtractorInterface;
 
 /**
  * @author Błażej Rybarkiewicz <b.rybarkiewicz@gmail.com>
  */
-final class ReflectionParameterResolver implements ReflectionParameterResolverInterface
+final class ParameterFactory implements ParameterFactoryInterface
 {
     /**
      * @var ParameterInfoExtractorInterface
@@ -35,7 +35,7 @@ final class ReflectionParameterResolver implements ReflectionParameterResolverIn
     /**
      * {@inheritdoc}
      */
-    public function resolveReflectionParameter(\ReflectionParameter $parameter): Parameter
+    public function createParameterFromReflection(\ReflectionParameter $parameter): Parameter
     {
         $parameterInfo = $this->parameterInfoExtractor->getParameterInfo($parameter);
 

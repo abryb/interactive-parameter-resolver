@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Abryb\InteractiveParameterResolver\Handler;
 
-use Abryb\InteractiveParameterResolver\IO;
 use Abryb\InteractiveParameterResolver\Parameter;
 use Abryb\InteractiveParameterResolver\ParameterHandlerInterface;
-use Abryb\InteractiveParameterResolver\ParameterHandlerWithResolverInterface;
+use Abryb\InteractiveParameterResolver\ResolverAwareParameterHandler;
 use Abryb\ParameterInfo\Type;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Symfony\Component\Console\Style\StyleInterface;
 
 /**
  * @author Błażej Rybarkiewicz <b.rybarkiewicz@gmail.com>
  */
-class CollectionTypeHandler implements ParameterHandlerInterface, ParameterHandlerWithResolverInterface
+class CollectionTypeHandler implements ParameterHandlerInterface, ResolverAwareParameterHandler
 {
     use ResolverTrait;
 
@@ -26,15 +26,19 @@ class CollectionTypeHandler implements ParameterHandlerInterface, ParameterHandl
             && $parameter->getType()->getCollectionValueType();
     }
 
-    public function handle(Parameter $parameter, IO $IO)
+    public function handle(Parameter $parameter, StyleInterface $io)
     {
         $innerType = $parameter->getType()->getCollectionValueType();
-        $IO->getOutput()->writeln("{$parameter->getName()} is collection.");
+        $io->writeln(sprintf(
+            "%s is collection of type %s.",
+            $parameter->getName(),
+            $innerType->getClassName() ? $innerType->getClassName() : $innerType->getBuiltinType()
+        ));
 
         $elements = [];
 
         $count = 0;
-        while ($IO->ask(new ConfirmationQuestion('Do you want to add an element? (y/N): ', false))) {
+        while ($io->askQuestion(new ConfirmationQuestion('Do you want to add an element?: ', $count === 0))) {
             $parameterChild = new Parameter(
                 "{$parameter->getName()}[{$count}]",
                 $innerType,
@@ -44,4 +48,5 @@ class CollectionTypeHandler implements ParameterHandlerInterface, ParameterHandl
 
         return $elements;
     }
+
 }

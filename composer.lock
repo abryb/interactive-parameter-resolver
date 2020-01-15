@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "abryb/parameter-info",
-            "version": "v0.3.1",
+            "version": "v0.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/abryb/ParameterInfo.git",
-                "reference": "8060bc0b403edec13c1bd17232e2e01aa15dcc42"
+                "reference": "8c6a0712f4d8ef064ad716ee36e6ce66cffeb899"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/abryb/ParameterInfo/zipball/8060bc0b403edec13c1bd17232e2e01aa15dcc42",
-                "reference": "8060bc0b403edec13c1bd17232e2e01aa15dcc42",
+                "url": "https://api.github.com/repos/abryb/ParameterInfo/zipball/8c6a0712f4d8ef064ad716ee36e6ce66cffeb899",
+                "reference": "8c6a0712f4d8ef064ad716ee36e6ce66cffeb899",
                 "shasum": ""
             },
             "require": {
@@ -47,7 +47,7 @@
                 "reflection",
                 "type"
             ],
-            "time": "2020-01-08T13:05:56+00:00"
+            "time": "2020-01-08T13:28:55+00:00"
         },
         {
             "name": "phpdocumentor/reflection-common",
