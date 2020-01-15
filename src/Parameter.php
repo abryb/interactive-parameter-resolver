@@ -34,12 +34,9 @@ class Parameter
 
     /**
      * Parameter constructor.
-     *
-     * @param null|bool|int|float|string $defaultValue
      */
     public function __construct(?string $name, Type $type, $defaultValue = null, ?string $description = null)
     {
-        Assert::nullOrScalar($defaultValue, "Parameter default value has to be scalar type or null");
         $this->name         = $name;
         $this->type         = $type;
         $this->defaultValue = $defaultValue;
