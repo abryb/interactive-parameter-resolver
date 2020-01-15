@@ -24,15 +24,6 @@ class ScalarTypeHandler extends AbstractHandler implements ParameterHandlerInter
         return in_array($type, [Type::BUILTIN_TYPE_BOOL, Type::BUILTIN_TYPE_INT, Type::BUILTIN_TYPE_FLOAT, Type::BUILTIN_TYPE_STRING]);
     }
 
-    public function handle(Parameter $parameter, StyleInterface $io)
-    {
-        if ($parameter->getDescription()) {
-            $io->text($parameter->getDescription());
-        }
-
-        return parent::handle($parameter, $io);
-    }
-
     protected function doHandle(Parameter $parameter, StyleInterface $io)
     {
         switch ($parameter->getType()->getBuiltinType()) {
@@ -97,12 +88,22 @@ class ScalarTypeHandler extends AbstractHandler implements ParameterHandlerInter
     {
         $result = $this->askParameter($io, $parameter);
 
+        if (!ctype_digit($result)) {
+            $io->warning("This is not an integer.");
+            $result = $this->askInt($parameter, $io);
+        }
+
         return is_null($result) ? $result : (int) $result;
     }
 
     private function askFloat(Parameter $parameter, StyleInterface $io) : ?float
     {
         $result = $this->askParameter($io, $parameter);
+
+        if (!is_numeric($result)) {
+            $io->warning("This is not float.");
+            $result =  $this->askFloat($parameter, $io);
+        }
 
         return is_null($result) ? $result : (float) $result;
     }

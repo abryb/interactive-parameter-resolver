@@ -29,24 +29,55 @@ class CollectionTypeHandler implements ParameterHandlerInterface, ResolverAwareP
     public function handle(Parameter $parameter, StyleInterface $io)
     {
         $innerType = $parameter->getType()->getCollectionValueType();
-        $io->writeln(sprintf(
+
+        if (in_array($innerType->getBuiltinType(), [Type::BUILTIN_TYPE_BOOL, Type::BUILTIN_TYPE_INT, Type::BUILTIN_TYPE_FLOAT, Type::BUILTIN_TYPE_STRING])) {
+            return $this->handleArrayOfScalar($parameter, $io, $innerType);
+        }
+
+        $io->note(sprintf(
             "%s is collection of type %s.",
             $parameter->getName(),
             $innerType->getClassName() ? $innerType->getClassName() : $innerType->getBuiltinType()
         ));
 
         $elements = [];
-
         $count = 0;
-        while ($io->askQuestion(new ConfirmationQuestion('Do you want to add an element?: ', $count === 0))) {
+        $question = sprintf('</>Do you want to add an element to <info>%s</info>?: ', $parameter->getName());
+        while ($io->askQuestion(new ConfirmationQuestion(sprintf($question), $count === 0))) {
+            $childName = "{$parameter->getName()}[{$count}]";
             $parameterChild = new Parameter(
-                "{$parameter->getName()}[{$count}]",
+                $childName,
                 $innerType,
             );
             $elements[] = $this->resolver->resolveParameter($parameterChild);
+            $io->text(sprintf("%s has been created.", $childName));
+            $question = sprintf('</>Do you want to add another element to <info>%s</info>?: ', $parameter->getName());
         }
 
         return $elements;
     }
 
+    private function handleArrayOfScalar(Parameter $parameter, StyleInterface $io, Type $innerType)
+    {
+        $io->note(sprintf("%s is collection of %s. Pass null to stop adding to collection.", $parameter->getName(), $parameter->getTypeString()));
+
+        $elements = [];
+        $count = 0;
+        $last = true;
+
+        while ($last !== null) {
+            $parameterChild = new Parameter(
+                "{$parameter->getName()}[{$count}]",
+                new Type(
+                    $innerType->getBuiltinType(),
+                    true,
+                ),
+
+            );
+            $elements[] = $last = $this->resolver->resolveParameter($parameterChild);
+            $count ++;
+        }
+
+        return $elements;
+    }
 }
